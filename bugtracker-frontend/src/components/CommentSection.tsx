@@ -113,6 +113,7 @@ export default function CommentSection({
                   {new Date(comment.createdAt).toLocaleString("en-US", {
                     dateStyle: "short",
                     timeStyle: "medium",
+                    timeZone: "UTC", 
                   })}
                 </span>
               </div>
