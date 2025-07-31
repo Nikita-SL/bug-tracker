@@ -121,7 +121,11 @@ describe("CommentSection", () => {
       />
     );
 
-    expect(screen.getByText(/6\/10\/23.*(10|11):00:00/)).toBeInTheDocument();
+  expect(
+    screen.getByText((text) =>
+      text.includes("6/10/23") && text.includes("1:00:00 PM")
+    )
+).toBeInTheDocument();
 
     jest.useRealTimers();
   });
