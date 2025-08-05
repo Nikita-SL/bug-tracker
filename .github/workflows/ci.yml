@@ -41,7 +41,7 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
           echo "report<<EOF" >> $GITHUB_OUTPUT
-          cat coverage.txt >> GITHUB_OUTPUT
+          cat coverage.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
           GOCACHE=/tmp/go-cache go test -v ./... 2>&1 | go-junit-report > test-results.xml
