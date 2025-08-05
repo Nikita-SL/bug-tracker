@@ -149,6 +149,7 @@ jobs:
           name: api-tests-results
           path: ./tests-api/test-results/
           retention-days: 30
+           
 
       - name: Upload API Tests Playwright Report
         if: always()
@@ -157,3 +158,12 @@ jobs:
           name: api-tests-results-playwright-report
           path: ./tests-api/playwright-report
           retention-days: 30
+
+
+      - name: Publish API Tests Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: API Tests REsults
+          path: ./tests-api/test-results*.xml
+          reporter: jest-junit
