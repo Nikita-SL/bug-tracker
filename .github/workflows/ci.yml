@@ -56,6 +56,8 @@ jobs:
 
   unit-tests-fe:
     runs-on: ubuntu-latest
+    outputs:
+      coverage: ${{ steps.test-fe.outputs.report }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,6 +69,7 @@ jobs:
           cache-dependency-path: bugtracker-frontend/package-lock.json
 
       - name: Execute FE unit tests
+        id: test-fe
         working-directory: ./bugtracker-frontend
         run: |
           npm ci
@@ -76,6 +79,10 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           cat full_output.txt >> $GITHUB_STEP_SUMMARY 
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          cat full_output.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Publish FE Test Results
         uses: dorny/test-reporter@v1
@@ -88,7 +95,7 @@ jobs:
 
   create-coverage-comment:
     if: github.event_name == 'pull_request'
-    needs: [unit-tests-be]
+    needs: [unit-tests-be, unit-tests-fe]
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -101,5 +108,15 @@ jobs:
             ## BE Test Coverage Report
             ```
             ${{ needs.unit-tests-be.outputs.coverage }}
+            ```
+
+      - name: Create FE coverage Comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## FE Test Coverage Report
+            ```
+            ${{ needs.unit-tests-fe.outputs.coverage }}
             ```
     
