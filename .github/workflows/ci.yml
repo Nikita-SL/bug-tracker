@@ -43,7 +43,7 @@ jobs:
         with:
           name: BE Unit Tests Report
           path: bugtracker-backend/test-results.xml
-          reporter: jest-junit
+          reporter: go-junit
 
   unit-tests-fe:
     needs: unit-tests-be
