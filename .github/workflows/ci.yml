@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -38,7 +41,7 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
           echo "report<<EOF" >> $GITHUB_OUTPUT
-          cat coverage.txt >> GITHUB_OUTPUT
+          cat coverage.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
           GOCACHE=/tmp/go-cache go test -v ./... 2>&1 | go-junit-report > test-results.xml
@@ -83,20 +86,20 @@ jobs:
           reporter: jest-junit
 
 
-create-coverage-comment:
-  if: github.event_name == 'pull_request'
-  needs: [unit-tests-be]
-  runs-on: ubuntu-latest
-  permissions:
-    pull-requests: write
-  steps:
-    - name: Create BE Coverage Comment
-      uses: peter-evans/create-or-update-comment@v4
-      with:
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
-          ## BE Test Coverage Report
-          ```
-          ${{ needs.unit-tests-be.outputs.coverage }}
-          ```
+  create-coverage-comment:
+    if: github.event_name == 'pull_request'
+    needs: [unit-tests-be]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create BE Coverage Comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## BE Test Coverage Report
+            ```
+            ${{ needs.unit-tests-be.outputs.coverage }}
+            ```
     
