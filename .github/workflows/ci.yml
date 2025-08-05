@@ -120,3 +120,15 @@ jobs:
             ${{ needs.unit-tests-fe.outputs.coverage }}
             ```
     
+  api-tests:
+    needs: [unit-tests-be, unit-tests-fe]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Launch App
+        run: |
+          docker compose up --build -d
+          npx wait-port http://localhost:8080/api/health -t 30000  
