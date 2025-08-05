@@ -27,7 +27,7 @@ jobs:
           GOCACHE=/tmp/go-cache go test -v ./... 2>&1 | go-junit-report > test-results.xml
 
       - name: Publish BE test results
-        uses: dornyTest-reporter@v1
+        uses: dorny/test-reporter@v1
         if: always()
         with:
           name: BE Unit Tests Report
